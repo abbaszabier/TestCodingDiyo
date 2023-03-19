@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import LeftNavbar from "./leftNavbar";
 import ContentBody from "./posBody";
 
 const PosPage = () => {
+  const [active, setActive] = useState("home");
+
+  const handleSetActive = (index) => {
+    setActive(index);
+  };
+
   return (
     <div className="flex">
       <div style={{ float: "left" }}>
-        <LeftNavbar />
+        <LeftNavbar active={active} handleSetActive={handleSetActive} />
       </div>
 
       <div style={{ float: "left", width: "100%" }}>

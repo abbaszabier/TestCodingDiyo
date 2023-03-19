@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Icon from "react-bootstrap-icons";
+import "./index.css";
 
-const LeftNavbar = () => {
+const LeftNavbar = ({ active, handleSetActive }) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
   };
-
   const navbarWidth = isExpanded ? "w-64" : "w-20";
 
   const navigate = useNavigate();
-
   const handleLogout = () => {
     navigate("/");
   };
@@ -27,20 +26,20 @@ const LeftNavbar = () => {
           </button>
         </div>
         <ul className="mt-8">
-          <li>
+          <li className={active === "home" ? "active" : ""} onClick={() => handleSetActive("home")}>
             <button className={`block w-full py-2 px-4 text-white hover:bg-red-600 focus:outline-none ${isExpanded ? "text-left" : "text-center"}`}>
               <Icon.HouseDoor className="w-5 h-5 inline-block mr-2" />
               {isExpanded && <span>Home</span>}
             </button>
           </li>
-          <li className="mt-4">
-            <button className={`block w-full py-2 px-4 text-white hover:bg-red-600 focus:outline-none ${isExpanded ? "text-left" : "text-center"}`}>
+          <li className={active === "order" ? "active" : ""} onClick={() => handleSetActive("order")}>
+            <button className={`block w-full py-2 px-4 text-white mt-4 hover:bg-red-600 focus:outline-none ${isExpanded ? "text-left" : "text-center"}`}>
               <Icon.ListOl className="w-5 h-5 inline-block mr-2" />
               {isExpanded && <span>Order</span>}
             </button>
           </li>
-          <li className="mt-4">
-            <button className={`block w-full py-2 px-4 text-white hover:bg-red-600 focus:outline-none ${isExpanded ? "text-left" : "text-center"}`}>
+          <li className={active === "menu" ? "active" : ""} onClick={() => handleSetActive("menu")}>
+            <button className={`block w-full py-2 px-4 text-white mt-4 hover:bg-red-600 focus:outline-none ${isExpanded ? "text-left" : "text-center"}`}>
               <Icon.ColumnsGap className="w-5 h-5 inline-block mr-2" />
               {isExpanded && <span>Menu</span>}
             </button>
