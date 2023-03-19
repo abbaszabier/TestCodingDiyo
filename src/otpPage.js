@@ -34,26 +34,26 @@ const OtpPage = () => {
         <h2 className=" text-xl mb-4 mt-2">Masukan kode OTP</h2>
         <div className="flex gap-5">
           <input
-            className="w-16 h-16 text-center text-xl shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+            className="w-16 h-16 text-center text-xl shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent"
             type="number"
             ref={inputRef}
             value={otp[0]}
             onChange={(e) => handleInputChange(e, 0)}
           />
           <input
-            className="w-16 h-16 text-center text-xl shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+            className="w-16 h-16 text-center text-xl shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent"
             type="number"
             value={otp[1]}
             onChange={(e) => handleInputChange(e, 1)}
           />
           <input
-            className="w-16 h-16 text-center text-xl shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+            className="w-16 h-16 text-center text-xl shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent"
             type="number"
             value={otp[2]}
             onChange={(e) => handleInputChange(e, 2)}
           />
           <input
-            className="w-16 h-16 text-center text-xl shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+            className="w-16 h-16 text-center text-xl shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent"
             type="number"
             value={otp[3]}
             onChange={(e) => handleInputChange(e, 3)}
