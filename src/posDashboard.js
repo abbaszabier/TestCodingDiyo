@@ -1,14 +1,17 @@
 import React from "react";
 import LeftNavbar from "./leftNavbar";
 import ContentBody from "./posBody";
-import RightNavbar from "./rightNavbar";
 
 const PosPage = () => {
   return (
     <div className="flex">
-      <LeftNavbar />
-      <ContentBody />
-      <RightNavbar />
+      <div style={{ float: "left" }}>
+        <LeftNavbar />
+      </div>
+
+      <div style={{ float: "left", width: "100%" }}>
+        <ContentBody />
+      </div>
     </div>
   );
 };
