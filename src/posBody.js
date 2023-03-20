@@ -1,14 +1,14 @@
 import React, { useState } from "react";
+import * as Icon from "react-bootstrap-icons";
 
 const ContentBody = () => {
   const [listMenu] = useState([
-    { id: 1, menu: "Sayur", price: 1000 },
-    { id: 2, menu: "Ayam", price: 1500 },
-    { id: 3, menu: "Ikan", price: 2000 },
-    { id: 4, menu: "Buah", price: 2500 },
+    { id: 1, menu: "Rise", price: 100 },
+    { id: 2, menu: "Meat", price: 250 },
+    { id: 3, menu: "Fish", price: 200 },
+    { id: 4, menu: "Fruit", price: 150 },
   ]);
-  const [orderList, setOrderList] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [orderedItems, setOrderedItems] = useState([]);
 
   const [buttonStatus, setButtonStatus] = useState([
     { id: 1, status: "available" },
@@ -20,24 +20,6 @@ const ContentBody = () => {
   ]);
   const [selectedButton, setSelectedButton] = useState(null);
 
-  const handleAddOrder = (id) => {
-    const selectedMenu = listMenu.find((menu) => menu.id === id);
-    const newOrderList = [...orderList, selectedMenu];
-    setOrderList(newOrderList);
-
-    const newTotalPrice = totalPrice + selectedMenu.price;
-    setTotalPrice(newTotalPrice);
-  };
-
-  const handleRemoveOrder = (id) => {
-    const selectedMenu = listMenu.find((menu) => menu.id === id);
-    const newOrderList = orderList.filter((order) => order.id !== selectedMenu.id);
-    setOrderList(newOrderList);
-
-    const newTotalPrice = totalPrice - selectedMenu.price;
-    setTotalPrice(newTotalPrice);
-  };
-
   const handleButtonStatus = (id) => {
     const updatedButtonStatus = buttonStatus.map((button) => {
       if (button.id === id) {
@@ -48,6 +30,41 @@ const ContentBody = () => {
     });
     setButtonStatus(updatedButtonStatus);
     setSelectedButton(id);
+  };
+
+  const handleListMenu = (id) => {
+    const orderedItem = {
+      id: id,
+      menu: listMenu.find((button) => button.id === id).menu,
+      price: listMenu.find((button) => button.id === id).price,
+      quantity: 1,
+    };
+    setOrderedItems([...orderedItems, orderedItem]);
+  };
+
+  const handleRemoveItem = (id) => {
+    const updatedOrderedItems = orderedItems.filter((item) => item.id !== id);
+    setOrderedItems(updatedOrderedItems);
+
+    const updatedButtonStatus = buttonStatus.map((button) => {
+      if (button.id === id) {
+        return { ...button, status: "available" };
+      } else {
+        return button;
+      }
+    });
+    setButtonStatus(updatedButtonStatus);
+  };
+
+  const handleStateFirstClick = () => {
+    const updatedButtonStatus = buttonStatus.map((button) => {
+      if (button.id === selectedButton) {
+        return { ...button, status: "available" };
+      } else {
+        return button;
+      }
+    });
+    setButtonStatus(updatedButtonStatus);
   };
 
   const handleBuyClick = () => {
@@ -94,6 +111,87 @@ const ContentBody = () => {
     setButtonStatus(updatedButtonStatus);
   };
 
+  const Detail = ({ orderedItems, onRemoveItem }) => {
+    const getTotalPrice = () => {
+      return orderedItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    };
+
+    const handleIncreaseQuantity = (id) => {
+      const updatedOrderedItems = orderedItems.map((item) => {
+        if (item.id === id) {
+          return { ...item, quantity: item.quantity + 1 };
+        } else {
+          return item;
+        }
+      });
+      setOrderedItems(updatedOrderedItems);
+    };
+
+    const handleDecreaseQuantity = (id) => {
+      const updatedOrderedItems = orderedItems.map((item) => {
+        if (item.id === id && item.quantity > 1) {
+          return { ...item, quantity: item.quantity - 1 };
+        } else {
+          return item;
+        }
+      });
+      setOrderedItems(updatedOrderedItems);
+    };
+
+    return (
+      <div>
+        {orderedItems.map((item) => (
+          <div key={item.id}>
+            <div className="flex items-center justify-between pr-4 pl-4 pb-4">
+              <span className="font-bold mr-3 text-sm">{`${item.menu}`}</span>
+              <button className="px-1 py-0 text-sm border border-red-500 text-red-500 rounded" onClick={() => handleDecreaseQuantity(item.id)}>
+                <Icon.Dash className="w-3 h-3 inline-block" />
+              </button>
+              <span className="text-sm">{item.quantity}x</span>
+              <button className="px-1 mr-3 py-0 text-sm border border-red-500 text-red-500 rounded" onClick={() => handleIncreaseQuantity(item.id)}>
+                <Icon.Plus className="w-3 h-3 inline-block" />
+              </button>
+              <span className="mr-3 text-sm">{`Rp${item.price}`}</span>
+              <span className="mr-3 text-sm">{`Rp${item.price * item.quantity}`}</span>
+              <button className="px-2 py-2 text-sm  bg-red-500 text-white rounded" onClick={() => onRemoveItem(item.id)}>
+                <Icon.TrashFill className="w-4 h-4 inline-block" />
+              </button>
+            </div>
+          </div>
+        ))}
+        <div className="flex items-center justify-between p-4">
+          <span className="font-bold text-lg">Total Price:</span>
+          <span className="text-lg">Rp {getTotalPrice()}</span>
+        </div>
+      </div>
+    );
+  };
+
+  const DetailBil = ({ orderedItems }) => {
+    const getTotalPrice = () => {
+      return orderedItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    };
+
+    return (
+      <div>
+        {orderedItems.map((item) => (
+          <div key={item.id}>
+            <div className="flex items-center justify-between pr-4 pl-4 pb-4">
+              <span className="font-bold mr-3 text-sm">{`${item.menu}`}</span>
+              <span className="text-sm">{item.quantity}x</span>
+              <span className="mr-3 text-sm">{`Rp${item.price}`}</span>
+              <span className="mr-3 text-sm">{`Rp${item.price * item.quantity}`}</span>
+            </div>
+          </div>
+        ))}
+        <div className="flex items-center justify-between p-4">
+          <span className="font-bold text-lg">Total Price:</span>
+          <span className="text-lg">Rp {getTotalPrice()}</span>
+        </div>
+      </div>
+    );
+  };
+
   const handleAfterBillingClick = () => {
     const updatedButtonStatus = buttonStatus.map((button) => {
       if (button.id === selectedButton) {
@@ -120,7 +218,7 @@ const ContentBody = () => {
               className={` text-red-500 font-bold text-lg py-8 px-12 rounded mb-4`}
               onClick={() => handleButtonStatus(button.id)}
             >
-              {`Meja ${button.id}`}
+              {`Table ${button.id}`}
             </button>
           ))
           .slice(0, 3)}
@@ -138,10 +236,28 @@ const ContentBody = () => {
               className={` text-red-500 font-bold text-lg py-8 px-12 rounded mb-4`}
               onClick={() => handleButtonStatus(button.id, button.status)}
             >
-              {`Meja ${button.id}`}
+              {`Table ${button.id}`}
             </button>
           ))
           .slice(3, 6)}
+      </div>
+      <div class="flex flex-wrap items-center justify-center mt-10">
+        <div class="flex items-center mr-4 mb-2">
+          <div class="w-4 h-4 border-2 border-red-600 mr-2"></div>
+          <span>Available</span>
+        </div>
+        <div class="flex items-center mr-4 mb-2">
+          <div class="w-4 h-4 bg-red-600 mr-2"></div>
+          <span>Seated</span>
+        </div>
+        <div class="flex items-center mr-4 mb-2">
+          <div class="w-4 h-4 bg-yellow-500 mr-2"></div>
+          <span>Ordered</span>
+        </div>
+        <div class="flex items-center mr-4 mb-2">
+          <div class="w-4 h-4 bg-blue-500 mr-2"></div>
+          <span>Billing</span>
+        </div>
       </div>
     </div>
   );
@@ -167,7 +283,7 @@ const ContentBody = () => {
                 className={` text-red-500 font-bold text-lg py-8 px-12 rounded mb-4`}
                 onClick={() => handleButtonStatus(button.id)}
               >
-                {`Meja ${button.id}`}
+                {`Table ${button.id}`}
               </button>
             ))
             .slice(0, 3)}
@@ -185,7 +301,7 @@ const ContentBody = () => {
                 className={` text-red-500 font-bold text-lg py-8 px-12 rounded mb-4`}
                 onClick={() => handleButtonStatus(button.id)}
               >
-                {`Meja ${button.id}`}
+                {`Table ${button.id}`}
               </button>
             ))
             .slice(3, 6)}
@@ -197,14 +313,14 @@ const ContentBody = () => {
       <div class="flex flex-col justify-center h-screen">
         <div class="flex justify-center mb-10">
           {listMenu.map((button) => (
-            <button key={button.id} className={`bg-red-500 hover:bg-red-700 text-white font-bold py-4 px-6 rounded mr-4`} onClick={() => handleAddOrder(button.id)}>
+            <button key={button.id} className={`bg-red-500 hover:bg-red-700 text-white font-bold py-8 px-12 rounded mr-4`} onClick={() => handleListMenu(button.id)}>
               {`${button.menu}`}
             </button>
           ))}
         </div>
         <div class="flex justify-center">
-          <button onClick={handleBuyClick} class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-            Batal
+          <button onClick={handleStateFirstClick} class="border-gray-500 border hover:text-white hover:bg-gray-700 text-gray-500 font-bold py-2 px-4 rounded">
+            Cancel
           </button>
         </div>
       </div>
@@ -217,40 +333,29 @@ const ContentBody = () => {
       <div className="w-1/4">
         {selectedButton && (
           <div className="text-center mt-5">
-            <h2 className="text-2xl mb-3">Meja: {buttonStatus[selectedButton - 1].id}</h2>
+            <h2 className="text-3xl mb-3">Table {buttonStatus[selectedButton - 1].id}</h2>
             {buttonStatus[selectedButton - 1].status === "available" && (
               <div>
-                <p>Status: {buttonStatus[selectedButton - 1].status}</p>
-                <button onClick={handleBuyClick} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded mt-2">
+                <p className="text-xl">Status: {buttonStatus[selectedButton - 1].status}</p>
+                <button onClick={handleBuyClick} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded mt-3">
                   Booking
                 </button>
               </div>
             )}
             {buttonStatus[selectedButton - 1].status === "seated" && (
               <div>
-                <p>Status: {buttonStatus[selectedButton - 1].status}</p>
-                <button onClick={handleOrderClick} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded mt-2">
+                <p className="text-xl">Status: {buttonStatus[selectedButton - 1].status}</p>
+                <button onClick={handleOrderClick} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded mt-3">
                   Make an Order
                 </button>
               </div>
             )}
             {buttonStatus[selectedButton - 1].status === "order" && (
               <div>
-                <p>Status: {buttonStatus[selectedButton - 1].status}</p>
-                <p>Menu:</p>
+                <p className="text-xl">Status: {buttonStatus[selectedButton - 1].status}</p>
+                <p className="mt-3 mb-1">Current Bill</p>
                 <p>
-                  {orderList.map((order) => (
-                    <tr key={order.id}>
-                      <td>{`${order.menu} - `}</td>
-                      <td>{`Rp ${order.price} - `}</td>
-                      <td>
-                        <button onClick={() => handleRemoveOrder(order.id)}>Hapus</button>
-                      </td>
-                      <td>
-                        <p>Total Harga: Rp {totalPrice}</p>
-                      </td>
-                    </tr>
-                  ))}
+                  <Detail orderedItems={orderedItems} onRemoveItem={handleRemoveItem} />
                 </p>
                 <button onClick={handleOrderedClick} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded mt-2">
                   Add Order
@@ -259,22 +364,8 @@ const ContentBody = () => {
             )}
             {buttonStatus[selectedButton - 1].status === "ordered" && (
               <div>
-                <p>Status: {buttonStatus[selectedButton - 1].status}</p>
-                <p>Menu:</p>
-                <p>
-                  {orderList.map((order) => (
-                    <tr key={order.id}>
-                      <td>{`${order.menu} - `}</td>
-                      <td>{`Rp ${order.price} - `}</td>
-                      <td>
-                        <button onClick={() => handleRemoveOrder(order.id)}>Hapus</button>
-                      </td>
-                      <td>
-                        <p>Total Harga: Rp {totalPrice}</p>
-                      </td>
-                    </tr>
-                  ))}
-                </p>
+                <p className="text-xl mb-3">Status: {buttonStatus[selectedButton - 1].status}</p>
+                <DetailBil orderedItems={orderedItems} onRemoveItem={handleRemoveItem} />
                 <div className="flex flex-col py-2 px-6">
                   <button onClick={handleOrderClick} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded mt-2">
                     Add Order
@@ -287,7 +378,7 @@ const ContentBody = () => {
             )}
             {buttonStatus[selectedButton - 1].status === "billing" && (
               <div>
-                <p>Status: {buttonStatus[selectedButton - 1].status}</p>
+                <p className="text-xl">Status: {buttonStatus[selectedButton - 1].status}</p>
                 <div class="flex justify-center mt-3 mb-3">
                   <div class="inline-flex items-center">
                     <label class="relative flex cursor-pointer items-center rounded-full p-3" for="html" data-ripple-dark="true">
@@ -305,6 +396,24 @@ const ContentBody = () => {
                     </label>
                     <label class="mt-px cursor-pointer select-none font-light text-gray-700" for="html">
                       Cash
+                    </label>
+                  </div>
+                  <div class="inline-flex items-center">
+                    <label class="relative flex cursor-pointer items-center rounded-full p-3" for="react" data-ripple-dark="true">
+                      <input
+                        id="react"
+                        name="type"
+                        type="radio"
+                        class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-full border border-blue-gray-200 text-red-500 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-red-500 checked:before:bg-red-500 hover:before:opacity-10"
+                      />
+                      <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-red-500 opacity-0 transition-opacity peer-checked:opacity-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
+                          <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
+                        </svg>
+                      </div>
+                    </label>
+                    <label class="mt-px cursor-pointer select-none font-light text-gray-700" for="react">
+                      Gopay
                     </label>
                   </div>
                   <div class="inline-flex items-center">
